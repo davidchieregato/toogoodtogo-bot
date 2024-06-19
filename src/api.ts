@@ -234,7 +234,8 @@ class APIClient {
     });
 
     if (!res?.ok) {
-      throw new Error('Error get items');
+      return {items: [] } as ApiItems;
+      //throw new Error('Error get items');
     }
 
     return JSON.parse(await res.text()) as ApiItems;
