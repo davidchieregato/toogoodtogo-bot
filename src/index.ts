@@ -240,7 +240,11 @@ export class Core {
   }
 
   private async loop() {
-    const timestamp = new Date().getTime();
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    const timestamp = now.getTime();
 
     if (
       timestamp - this.timestamp_refresh_token >
@@ -251,8 +255,13 @@ export class Core {
       this.authenticationIntervalInMs =
         parseInt(env.AUTHENTICATION_INTERVAL_IN_MS) * random(50, 150) * 0.01;
     }
+    const isWithin1 =
+        (currentHour > 16 || (currentHour === 16 && currentMinutes >= 30)) &&
+        currentHour < 19;
 
-    if (timestamp - this.timestamp_get_favorite > this.getItemsIntervalInMs) {
+    const isWithin2 = (currentHour > 20 && currentHour < 21);
+
+    if ((isWithin1 || isWithin2) &&(timestamp - this.timestamp_get_favorite > this.getItemsIntervalInMs)) {
       await this.getFavorite();
       this.timestamp_get_favorite = timestamp;
       this.getItemsIntervalInMs =
